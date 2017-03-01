@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+    <style>
+        .cross-sign {
+            margin-top: -28px;
+        }
+    </style>
+</head>
+
+<body ng-app="myApp" ng-controller="todoCtrl">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <span class="navbar-brand">UrList</span>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <br>
+        <div class="tab-content">
+
+            <div id="home" class="tab-pane fade in active">
+                <div ng-show="isBothEmpty()" class="alert alert-warning">
+                    <h3><strong>Your List is Empty!</strong></h3>
+                    <br><br>
+                    <h5>
+                        <p>Manage tasks and projects anywhere with UrList.</p>
+                        <p>UrList is your own personal To-Do list.</p>
+                        <p>Access it from anywhere and get organized!</p>
+                    </h5>
+                    <br><br>
+                    <div class="text-center"><a class="btn btn-success btn-lg" data-toggle="tab" href="#main">Get Started</a></div><br>
+                </div>
+            </div>
+
+            <div id="main" class="tab-pane fade">
+
+                <div class="page-header">
+                    <h3>Add Items</h3>
+                </div>
+                <form>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="todoInput" size="50" placeholder="Add New">
+                        <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="todoAdd()"><span class="glyphicon glyphicon-plus"></span>                        Add New</button>
+                        </span>
+                    </div>
+                </form>
+                <br><br>
+
+                <!-- Alert -->
+                <div class="alert alert-danger" role="alert" ng-show="flagDuplicate">
+                    <span>{{errorMessage}}</span>
+                </div>
+                <!-- Alert -->
+
+                <!-- Add Items -->
+                <div class="row">
+                    <div ng-show="!isBothEmpty()" class="col-sm-6 col-md-6 col-xs-12 clearfix">
+                        <div class="well">
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">To Be Done<span class="badge pull-right">{{countTotal()}}</span></div>
+                                <table class="table">
+                                    <tr ng-repeat="x in todoList | orderBy : 'date'">
+                                        <td>
+                                            <div class="checkbox"><label><input type="checkbox" ng-model="x.checkboxStatus">{{ x.todoText }}</label></div>
+                                            <span ng-click="removeTodo($index)" class="glyphicon glyphicon-remove pull-right cross-sign"></span>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="isEmpty()">
+                                        <td class="alert alert-danger" role="alert">No Items in this List</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div ng-show="!isEmpty()">
+                                <button ng-click="completed()" class="btn btn-success pull-right col-xs-12 col-sm-12 col-md-6">
+                Move to Completed <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+                            </div><br><br>
+                        </div><br>
+                    </div>
+
+                    <!-- Completed Items -->
+                    <div ng-show="!isBothEmpty()" class="col-sm-6 col-md-6 col-xs-12 clearfix">
+                        <div class="well">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">Completed<span class="badge pull-right">{{countDeleted()}}</span></div>
+                                <table class="table">
+                                    <tr ng-repeat="y in completedList | orderBy : 'date'">
+                                        <td>
+                                            <div class="checkbox"><label><input type="checkbox" ng-model="y.checkboxStatus">{{ y.todoText }}</label></div>
+                                            <span ng-click="removeCompleted($index)" class="glyphicon glyphicon-remove pull-right cross-sign"></span>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="isEmptyCompleted()">
+                                        <td class="alert alert-danger" role="alert">No Items in this List</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div ng-show="!isEmptyCompleted()">
+                                <button ng-click="move()" class="btn btn-warning pull-left col-xs-12 col-sm-12 col-md-6">
+                <span class="glyphicon glyphicon-chevron-left"></span> Move to To-Do
+            </button>
+                            </div><br><br>
+                        </div><br>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Alert!</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>{{errorMessage}}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="moveThroughModal()">Move to To-Do</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
